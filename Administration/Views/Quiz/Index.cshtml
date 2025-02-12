@@ -1,0 +1,55 @@
+﻿@model ICollection<Quiz>
+
+<div class="container p-1 m-1">
+    <div class="row">
+        <div class="col-6 text-primary">
+            Quiz List
+        </div>
+        <div class="col-6 text-end">
+            <a class="btn btn-primary" asp-controller="Quiz" asp-action="Create">
+                Create New Quiz <i class="bi bi-plus-circle"></i>
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="container p-1 m-1">
+
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Quiz Name</th>
+                <th>Quiz Description</th>
+                <th>Quiz Date</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var quiz in Model.OrderByDescending(q => q.Date))
+            {
+                <tr>
+                    <td>@quiz.Name</td>
+                    <td>@quiz.Description</td>
+                    <td>@quiz.Date</td>
+                    <td>
+                    <img src="@Url.Action("GetImage", "Quiz", new { id = quiz.Id })" alt="Image" />
+                    </td>
+                    <td>
+                        <div class="container" role="group">
+                            <a class="btn btn-primary" asp-controller="Question" asp-action="Create" asp-route-id="@quiz.Id">
+                                Add Question <i class="bi bi-plus-circle"></i>
+                            </a>
+                            <a class="btn btn-secondary" asp-controller="Quiz" asp-action="Edit" asp-route-id="@quiz.Id">
+                                Edit <i class="bi bi-pencil"></i>
+                            </a>
+                            <a class="btn btn-danger" asp-controller="Quiz" asp-action="Delete" asp-route-id="@quiz.Id">
+                                Delete <i class="bi bi-trash"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

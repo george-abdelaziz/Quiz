@@ -1,0 +1,50 @@
+﻿@model EditQuizDto
+
+@* <input asp-for="id" hidden/> *@
+
+
+<div class="text-primary">
+    <h1>Create Quiz</h1>
+</div>
+@* asp-action="Upload" *@
+<form method="post" enctype="multipart/form-data">
+    <input asp-for="Id" hidden/>
+    @* take name *@
+    <div class="form-group">
+        <label asp-for="Name">Name</label>
+        <input asp-for="Name" class="form-control">
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    @* take description *@
+    <div class="form-group">
+        <label asp-for="Description">Description</label>
+        <input asp-for="Description" class="form-control">
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+    @* take date *@
+    <div class="form-group">
+        <label asp-for="Date">Date</label>
+        <input asp-for="Date" class="form-control">
+        <span asp-validation-for="Date" class="text-danger"></span>
+    </div>
+    @* take img *@
+    <div class="form-group">
+        <label asp-for="FormFile" for="Image Upload"></label>
+        <input asp-for="FormFile" type="file" class="form-control">
+        <span asp-validation-for="FormFile" class="text-danger"></span>
+    </div>
+    <div class="row p-1">
+        <div class="col-6">
+            <button type="submit" class="btn btn-primary">Update</button>
+        </div>
+        <div class="col-6">
+            <a asp-controller="Quiz" asp-action="Index" class="btn btn-secondary">Go Back?</a>
+        </div>
+    </div>
+</form>
+
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

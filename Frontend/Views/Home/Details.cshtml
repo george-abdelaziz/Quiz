@@ -1,0 +1,61 @@
+﻿@model TakeQuizDto
+
+<div class="container mt-4">
+    <div class="card">
+        <img class="card-img-top" src='@Url.Action("GetImage", "Home", new { id = Model.Id })' alt="Quiz Image">
+        <div class="card-body">
+            <h1 class="card-title">@Model.Name</h1>
+            <p class="card-text">@Model.Description</p>
+        </div>
+        <div class="card-footer text-muted text-right">
+            <small>@Model.Date</small>
+        </div>
+    </div>
+</div>
+<form method="post">
+    <input asp-for="Id" hidden />
+    <div class="container mt-4">
+        <label asp-for="@Model.Email">Email</label>
+        <input asp-for="@Model.Email" class=" form-control">
+        <span asp-validation-for="@Model.Email" class="text-danger"></span>
+        <ol>
+
+            @for (int i = 0; i < Model.Questions.Count; i++)
+            {
+
+                <input asp-for="@Model.Answers[@i].QuestionId" hidden />
+                <li>
+                    <div class="mb-4">
+                        <h4>@Model.Questions[i].Text</h4>
+                        @if (Model.Questions[i].IsMCQ)
+                        {
+                            @* asp -for= "Answers.AnswerValue[@i].QuestionAnswer" *@
+                            <select asp-for="@Model.Answers[@i].QuestionAnswer" asp-items="@Model.Questions[i].Choices.ToSelectListItems()" class="form-select">
+                                <option disabled selected>-Select Choice-</option>
+                            </select>
+                        }
+                        else
+                        {
+                            <div class="form-group">
+                                <label>Text Question</label>
+                                @* asp-for="Answers.AnswerValue[@i].QuestionAnswer" *@
+                                <input class="form-control">
+                                @* <span asp-validation-for="Answers.AnswerValue[@i].QuestionAnswer" class="text-danger"></span> *@
+                            </div>
+                        }
+                    </div>
+                </li>
+            }
+
+    </ol>
+        <div class="row p-1">
+            <div class="col-6">
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+            <div class="col-6">
+                <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">Go Back?</a>
+            </div>
+        </div>
+    </div>
+
+</form>
