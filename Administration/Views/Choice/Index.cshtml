@@ -10,6 +10,7 @@
     <table class="table table-bordered table-striped">
         <thead>
             <tr>
+                <th>Id</th>
                 <th>Choice</th>
                 <th>Is Correct</th>
                 <th></th>
@@ -20,14 +21,15 @@
             @foreach (var choice in Model)
             {
                 <tr>
+                    <td>@choice.Id</td>
                     <td>@choice.Text</td>
                     <td>
                         @if(choice.IsCorrect){
-                            <p>Correct</p>
+                            <i class="bi bi-check"></i>
                         }
                         else
                         {
-                            <p>Wrong</p>
+                            <i class="bi bi-x-circle"></i>
                         }
                     </td>
                     <td>

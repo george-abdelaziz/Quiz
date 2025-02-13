@@ -1,7 +1,6 @@
-﻿using DataAccess.DTOs.QuizDtos;
-using DataAccess.Interface;
+﻿using DataAccess.Interface;
+using DataAccess.Models;
 using Microsoft.AspNetCore.Mvc;
-using WebAPI.DTOs.TakeQuizDtos;
 using WebAPI.Mappers;
 
 namespace WebAPI.Controllers
@@ -49,13 +48,33 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Details([FromForm]TakeQuizDto quizDto)
+        public async Task<IActionResult> Details([FromBody] List<QuizAnswer> quizAnswers)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-
+            var simpleUser = await _unitOfWork.UserDatas.Get(u => u.Email == quizAnswers[0].Email);
+            if (simpleUser == null)
+            {
+                simpleUser = await _unitOfWork.UserDatas.Add(new UserData { Email = quizAnswers[0].Email });
+            }
+            var userAnswer = _unitOfWork.QuizzesAnswer.Get(a => a.Email == quizAnswers[0].Email && a.QuizId == quizAnswers[0].QuizId);
+            if (userAnswer == null)
+            {
+                foreach (var answer in quizAnswers)
+                {
+                    await _unitOfWork.QuizzesAnswer.Add(answer);
+                }
+            }
+            else
+            {
+                foreach (var answer in quizAnswers)
+                {
+                    _unitOfWork.QuizzesAnswer.Update(answer);
+                }
+            }
+            await _unitOfWork.Save();
             return Ok();
         }
     }

@@ -33,7 +33,7 @@ public partial class QuizContext : IdentityDbContext
 
         base.OnModelCreating(modelBuilder);
 
-        
+
         //modelBuilder.Entity<Answer>(answer =>
         //{
         //    answer.HasKey(a => a.Email);

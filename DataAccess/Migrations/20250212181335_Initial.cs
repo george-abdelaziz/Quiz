@@ -1,27 +1,15 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace DataAccess.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialMigration : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
-                name: "Answers",
-                columns: table => new
-                {
-                    Email = table.Column<string>(type: "nvarchar(450)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Answers", x => x.Email);
-                });
-
             migrationBuilder.CreateTable(
                 name: "AspNetRoles",
                 columns: table => new
@@ -80,22 +68,14 @@ namespace DataAccess.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "MyPairs",
+                name: "UserDatas",
                 columns: table => new
                 {
-                    UserEmail = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    QuestionId = table.Column<int>(type: "int", nullable: false),
-                    QuestionAnswer = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    AnswerEmail = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                    Email = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_MyPairs", x => new { x.UserEmail, x.QuestionId });
-                    table.ForeignKey(
-                        name: "FK_MyPairs_Answers_AnswerEmail",
-                        column: x => x.AnswerEmail,
-                        principalTable: "Answers",
-                        principalColumn: "Email");
+                    table.PrimaryKey("PK_UserDatas", x => x.Email);
                 });
 
             migrationBuilder.CreateTable(
@@ -226,6 +206,26 @@ namespace DataAccess.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "QuizAnswers",
+                columns: table => new
+                {
+                    Email = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    QuizId = table.Column<int>(type: "int", nullable: false),
+                    QuestionId = table.Column<int>(type: "int", nullable: false),
+                    QuestionAnswer = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UserDataEmail = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_QuizAnswers", x => new { x.QuizId, x.QuestionId, x.Email });
+                    table.ForeignKey(
+                        name: "FK_QuizAnswers_UserDatas_UserDataEmail",
+                        column: x => x.UserDataEmail,
+                        principalTable: "UserDatas",
+                        principalColumn: "Email");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Choice",
                 columns: table => new
                 {
@@ -291,14 +291,14 @@ namespace DataAccess.Migrations
                 column: "QuestionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_MyPairs_AnswerEmail",
-                table: "MyPairs",
-                column: "AnswerEmail");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Question_QuizId",
                 table: "Question",
                 column: "QuizId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_QuizAnswers_UserDataEmail",
+                table: "QuizAnswers",
+                column: "UserDataEmail");
         }
 
         /// <inheritdoc />
@@ -323,7 +323,7 @@ namespace DataAccess.Migrations
                 name: "Choice");
 
             migrationBuilder.DropTable(
-                name: "MyPairs");
+                name: "QuizAnswers");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
@@ -335,7 +335,7 @@ namespace DataAccess.Migrations
                 name: "Question");
 
             migrationBuilder.DropTable(
-                name: "Answers");
+                name: "UserDatas");
 
             migrationBuilder.DropTable(
                 name: "Quiz");

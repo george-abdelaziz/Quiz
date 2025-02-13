@@ -12,6 +12,8 @@ namespace DataAccess.Repository
             Quizzes = new QuizRepository(_db);
             Questions = new QuestionRepository(_db);
             Choices = new ChoiceRepository(_db);
+            UserDatas = new UserDataRepository(_db);
+            QuizzesAnswer = new QuizAnswerRepository(_db);
             //Answers = new AnswerRepository(_db);
         }
         public IQuizRepository Quizzes { set; get; }
@@ -23,8 +25,6 @@ namespace DataAccess.Repository
         public IUserDataRepository UserDatas { set; get; }
 
         public IQuizAnswerRepository QuizzesAnswer { set; get; }
-
-        //public IAnswerRepository Answers { set; get; }
 
         public async Task Save()
         {

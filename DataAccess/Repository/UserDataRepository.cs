@@ -1,22 +1,20 @@
 ﻿using DataAccess.Interface;
 using DataAccess.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DataAccess.Repository
 {
     public class UserDataRepository : GenericRepository<UserData>, IUserDataRepository
     {
+        private readonly QuizContext _db;
         public UserDataRepository(QuizContext db) : base(db)
         {
+            _db = db;
         }
 
         public void Update(UserData data)
         {
-            throw new NotImplementedException();
+            if (data == null) {return; }
+            _db.UserDatas.Update(data);
         }
     }
 }

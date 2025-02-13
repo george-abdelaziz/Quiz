@@ -12,11 +12,13 @@ namespace Frontend.Controllers
         private readonly IUnitOfWork _unitOfWork;
         private readonly IHttpClientFactory _clientFactory;
         private readonly HttpClient _httpClient;
+        private string _url;
         public HomeController(IUnitOfWork unitOfWork, IHttpClientFactory clientFactory, HttpClient httpClient)
         {
             _unitOfWork = unitOfWork;
             _clientFactory = clientFactory;
             _httpClient = httpClient;
+            _url = "https://localhost:7172/api/";
         }
         [HttpGet]
         public async Task<IActionResult> Index()
@@ -27,7 +29,7 @@ namespace Frontend.Controllers
         public async Task<IActionResult> GetAll()
         {
             var client = _clientFactory.CreateClient();
-            var response = await client.GetAsync("https://localhost:7172/api/Frontend");
+            var response = await client.GetAsync($"{_url}Frontend");
             if (response.IsSuccessStatusCode)
             {
                 var jsonString = await response.Content.ReadAsStringAsync();
@@ -41,7 +43,7 @@ namespace Frontend.Controllers
         public async Task<IActionResult> Details(int id)
         {
             var client = _clientFactory.CreateClient();
-            var response = await client.GetAsync($"https://localhost:7172/api/Frontend/{id}");
+            var response = await client.GetAsync($"{_url}Frontend/{id}");
             if (response.IsSuccessStatusCode)
             {
                 var jsonString = await response.Content.ReadAsStringAsync();
@@ -53,16 +55,26 @@ namespace Frontend.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult>Details(TakeQuizDto quizDto)
+        public async Task<IActionResult> Details(TakeQuizDto quizDto)
         {
-            var jsonContent = JsonSerializer.Serialize(quizDto);
-            var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
-            var response = await _httpClient.PostAsync("https://localhost:7172/api/Frontend", content);
-            if(response == null || !response.IsSuccessStatusCode)
+            if (!ModelState.IsValid)
             {
-                var errorContent = await response.Content.ReadAsStringAsync();
-                return BadRequest($"Error: {errorContent}");
+                return View(quizDto);
+            }
+            foreach (var answer in quizDto.Answers)
+            {
+                answer.Email = quizDto.Email;
+                answer.QuizId = quizDto.Id;
+            }
+            var jsonContent = JsonSerializer.Serialize(quizDto.Answers);
+            var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+            var response = await _httpClient.PostAsync($"{_url}Frontend", content);
+            if (response == null || !response.IsSuccessStatusCode)
+            {
+                //var errorContent = await response.Content.ReadAsStringAsync();
+                //return BadRequest($"Error: {errorContent}");
                 //ModelState.AddModelError(string.Empty, "An error occurred while sending data.");
+                return View(quizDto);
             }
             return RedirectToAction("Index", "Home");
         }
@@ -74,16 +86,15 @@ namespace Frontend.Controllers
             {
                 return RedirectToAction("Index");
             }
-            var quiz = await _unitOfWork.Quizzes.Get(q => q.Id == id);
-            if (quiz == null)
+            var apiUrl = $"{_url}Photo/{id}";
+            var response = await _httpClient.GetAsync(apiUrl);
+            if (!response.IsSuccessStatusCode)
             {
-                return NotFound();
+                var errorContent = await response.Content.ReadAsStringAsync();
+                return BadRequest($"Error: {errorContent}");
             }
-            if (quiz.ImageData == null)
-            {
-                return NotFound();
-            }
-            return File(quiz.ImageData, quiz.ImageType);
+            var imageBytes = await response.Content.ReadAsByteArrayAsync();
+            return File(imageBytes, "image/jpeg");
         }
     }
 }

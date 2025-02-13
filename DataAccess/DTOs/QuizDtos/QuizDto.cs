@@ -1,6 +1,4 @@
-﻿using DataAccess.Models;
-
-namespace DataAccess.DTOs.QuizDtos
+﻿namespace DataAccess.DTOs.QuizDtos
 {
     public class QuizDto
     {

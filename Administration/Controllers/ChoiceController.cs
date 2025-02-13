@@ -43,6 +43,10 @@ namespace Administration.Controllers
             {
                 return NotFound("question not found / choice controller/ create action");
             }
+            if (question.Choices.Count == 0)
+            {
+                createChoiceDto.IsCorrect = true;
+            }
             question.IsMCQ = true;
             if (createChoiceDto.IsCorrect)
             {
@@ -95,6 +99,23 @@ namespace Administration.Controllers
                     questionChoice.IsCorrect = false;
                 }
             }
+            else
+            {
+                bool condi = false;
+                foreach (Choice questionChoice in question.Choices)
+                {
+                    if (questionChoice.IsCorrect && questionChoice.Id != choice.Id)
+                    {
+                        condi = true;
+                        break;
+                    }
+                }
+                if (!condi)
+                {
+                    ModelState.AddModelError("Choice", "Choice can be false because it is the only true choice");
+                    return View(choice);
+                }
+            }
             var updatedChoice = await _unitOfWork.Choices.Update(choice);
             if (updatedChoice == null) { return NotFound("Choice Not Found/Choice/Edit/post"); }
             _unitOfWork.Save();
@@ -123,10 +144,29 @@ namespace Administration.Controllers
             {
                 return BadRequest("model not valid / choice controller / delete action / httpget");
             }
-            var choice = await _unitOfWork.Choices.Get(q => q.Id == id);
+            var choice = await _unitOfWork.Choices.Get(c => c.Id == id);
             if (choice == null)
             {
                 return NotFound("choice not found / choice controller / delete action / httpget");
+            }
+            var question = await _unitOfWork.Questions.Get(q => q.Id == choice.QuestionId);
+            if (question != null)
+            {
+                if (question.Choices.Count == 1)
+                {
+                    question.IsMCQ = false;
+                }
+                if (choice.IsCorrect)
+                {
+                    foreach (Choice questionChoice in question.Choices)
+                    {
+                        if (questionChoice.Id != choice.Id)
+                        {
+                            questionChoice.IsCorrect = true;
+                            break;
+                        }
+                    }
+                }
             }
             _unitOfWork.Choices.Remove(choice);
             await _unitOfWork.Save();

@@ -18,23 +18,25 @@
     <table class="table table-bordered table-striped">
         <thead>
             <tr>
+                <th>Id</th>
                 <th>Quiz Name</th>
                 <th>Quiz Description</th>
                 <th>Quiz Date</th>
                 <th></th>
-                <th></th>
+                @* <th></th> *@
             </tr>
         </thead>
         <tbody>
             @foreach (var quiz in Model.OrderByDescending(q => q.Date))
             {
                 <tr>
+                    <td>@quiz.Id</td>
                     <td>@quiz.Name</td>
                     <td>@quiz.Description</td>
                     <td>@quiz.Date</td>
-                    <td>
+                    @* <td>
                     <img src="@Url.Action("GetImage", "Quiz", new { id = quiz.Id })" alt="Image" />
-                    </td>
+                    </td> *@
                     <td>
                         <div class="container" role="group">
                             <a class="btn btn-primary" asp-controller="Question" asp-action="Create" asp-route-id="@quiz.Id">

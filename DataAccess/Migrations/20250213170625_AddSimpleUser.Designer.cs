@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(QuizContext))]
-    [Migration("20250212143202_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20250213170625_AddSimpleUser")]
+    partial class AddSimpleUser
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,16 +24,6 @@ namespace DataAccess.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("DataAccess.Models.Answer", b =>
-                {
-                    b.Property<string>("Email")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Email");
-
-                    b.ToTable("Answers");
-                });
 
             modelBuilder.Entity("DataAccess.Models.Choice", b =>
                 {
@@ -62,28 +52,6 @@ namespace DataAccess.Migrations
                     b.HasIndex("QuestionId");
 
                     b.ToTable("Choice", (string)null);
-                });
-
-            modelBuilder.Entity("DataAccess.Models.MyPair", b =>
-                {
-                    b.Property<string>("UserEmail")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("QuestionId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("AnswerEmail")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("QuestionAnswer")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("UserEmail", "QuestionId");
-
-                    b.HasIndex("AnswerEmail");
-
-                    b.ToTable("MyPairs");
                 });
 
             modelBuilder.Entity("DataAccess.Models.Question", b =>
@@ -163,6 +131,41 @@ namespace DataAccess.Migrations
                         .HasName("PK__Quiz__3214EC07E1D83FE5");
 
                     b.ToTable("Quiz", (string)null);
+                });
+
+            modelBuilder.Entity("DataAccess.Models.QuizAnswer", b =>
+                {
+                    b.Property<int>("QuizId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("QuestionId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("QuestionAnswer")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserDataEmail")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("QuizId", "QuestionId", "Email");
+
+                    b.HasIndex("UserDataEmail");
+
+                    b.ToTable("QuizAnswers");
+                });
+
+            modelBuilder.Entity("DataAccess.Models.UserData", b =>
+                {
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Email");
+
+                    b.ToTable("UserDatas");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -375,13 +378,6 @@ namespace DataAccess.Migrations
                     b.Navigation("Question");
                 });
 
-            modelBuilder.Entity("DataAccess.Models.MyPair", b =>
-                {
-                    b.HasOne("DataAccess.Models.Answer", null)
-                        .WithMany("AnswerValue")
-                        .HasForeignKey("AnswerEmail");
-                });
-
             modelBuilder.Entity("DataAccess.Models.Question", b =>
                 {
                     b.HasOne("DataAccess.Models.Quiz", "Quiz")
@@ -392,6 +388,13 @@ namespace DataAccess.Migrations
                         .HasConstraintName("FK__Question__QuizId__2D27B809");
 
                     b.Navigation("Quiz");
+                });
+
+            modelBuilder.Entity("DataAccess.Models.QuizAnswer", b =>
+                {
+                    b.HasOne("DataAccess.Models.UserData", null)
+                        .WithMany("QuizAnswers")
+                        .HasForeignKey("UserDataEmail");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -445,11 +448,6 @@ namespace DataAccess.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("DataAccess.Models.Answer", b =>
-                {
-                    b.Navigation("AnswerValue");
-                });
-
             modelBuilder.Entity("DataAccess.Models.Question", b =>
                 {
                     b.Navigation("Choices");
@@ -458,6 +456,11 @@ namespace DataAccess.Migrations
             modelBuilder.Entity("DataAccess.Models.Quiz", b =>
                 {
                     b.Navigation("Questions");
+                });
+
+            modelBuilder.Entity("DataAccess.Models.UserData", b =>
+                {
+                    b.Navigation("QuizAnswers");
                 });
 #pragma warning restore 612, 618
         }
