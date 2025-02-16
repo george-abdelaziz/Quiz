@@ -13,7 +13,7 @@ namespace DataAccess.Repository
 
         public void Update(UserData data)
         {
-            if (data == null) {return; }
+            if (data == null) { return; }
             _db.UserDatas.Update(data);
         }
     }

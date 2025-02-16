@@ -50,30 +50,31 @@ namespace WebAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> Details([FromBody] List<QuizAnswer> quizAnswers)
         {
-            if (!ModelState.IsValid)
+            if (!ModelState.IsValid || quizAnswers == null || quizAnswers.Count == 0)
             {
                 return BadRequest(ModelState);
             }
-            var simpleUser = await _unitOfWork.UserDatas.Get(u => u.Email == quizAnswers[0].Email);
+            var simpleUser = await _unitOfWork.UserDatas.Get(u => u.Email == quizAnswers[0].UserDataEmail);
             if (simpleUser == null)
             {
-                simpleUser = await _unitOfWork.UserDatas.Add(new UserData { Email = quizAnswers[0].Email });
+                simpleUser = await _unitOfWork.UserDatas.Add(new UserData { Email = quizAnswers[0].UserDataEmail });
+                await _unitOfWork.Save();
             }
-            var userAnswer = _unitOfWork.QuizzesAnswer.Get(a => a.Email == quizAnswers[0].Email && a.QuizId == quizAnswers[0].QuizId);
-            if (userAnswer == null)
+            foreach (var answer in quizAnswers)
             {
-                foreach (var answer in quizAnswers)
+                QuizAnswer userAnswer = await _unitOfWork.QuizzesAnswer.Get(a => a.UserDataEmail == answer.UserDataEmail && a.QuizId == answer.QuizId && a.QuestionId == answer.QuestionId);
+                if (userAnswer == null)
                 {
                     await _unitOfWork.QuizzesAnswer.Add(answer);
                 }
-            }
-            else
-            {
-                foreach (var answer in quizAnswers)
+                else
                 {
-                    _unitOfWork.QuizzesAnswer.Update(answer);
+                    userAnswer.QuestionAnswer = answer.QuestionAnswer;
                 }
+
             }
+
+
             await _unitOfWork.Save();
             return Ok();
         }

@@ -61,10 +61,13 @@ namespace Frontend.Controllers
             {
                 return View(quizDto);
             }
-            foreach (var answer in quizDto.Answers)
+            if (quizDto.Answers != null)
             {
-                answer.Email = quizDto.Email;
-                answer.QuizId = quizDto.Id;
+                foreach (var answer in quizDto.Answers)
+                {
+                    answer.UserDataEmail = quizDto.Email;
+                    answer.QuizId = quizDto.Id;
+                }
             }
             var jsonContent = JsonSerializer.Serialize(quizDto.Answers);
             var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");

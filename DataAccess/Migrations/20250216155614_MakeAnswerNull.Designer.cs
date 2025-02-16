@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(QuizContext))]
-    [Migration("20250213170625_AddSimpleUser")]
-    partial class AddSimpleUser
+    [Migration("20250216155614_MakeAnswerNull")]
+    partial class MakeAnswerNull
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -41,17 +41,14 @@ namespace DataAccess.Migrations
 
                     b.Property<string>("Text")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
                         .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)")
-                        .HasDefaultValue("");
+                        .HasColumnType("nvarchar(250)");
 
-                    b.HasKey("Id")
-                        .HasName("PK__Choice__3214EC0744673E6D");
+                    b.HasKey("Id");
 
                     b.HasIndex("QuestionId");
 
-                    b.ToTable("Choice", (string)null);
+                    b.ToTable("Choices");
                 });
 
             modelBuilder.Entity("DataAccess.Models.Question", b =>
@@ -70,17 +67,14 @@ namespace DataAccess.Migrations
 
                     b.Property<string>("Text")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
                         .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)")
-                        .HasDefaultValue("");
+                        .HasColumnType("nvarchar(500)");
 
-                    b.HasKey("Id")
-                        .HasName("PK__Question__3214EC07E7F40DC7");
+                    b.HasKey("Id");
 
                     b.HasIndex("QuizId");
 
-                    b.ToTable("Question", (string)null);
+                    b.ToTable("Questions");
                 });
 
             modelBuilder.Entity("DataAccess.Models.Quiz", b =>
@@ -92,68 +86,51 @@ namespace DataAccess.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("Date")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
                         .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)")
-                        .HasDefaultValue("");
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<byte[]>("ImageData")
                         .HasColumnType("varbinary(max)");
 
                     b.Property<string>("ImageName")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
                         .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)")
-                        .HasDefaultValue("");
+                        .HasColumnType("nvarchar(250)");
 
                     b.Property<string>("ImageType")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)")
-                        .HasDefaultValue("");
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
                         .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)")
-                        .HasDefaultValue("");
+                        .HasColumnType("nvarchar(250)");
 
-                    b.HasKey("Id")
-                        .HasName("PK__Quiz__3214EC07E1D83FE5");
+                    b.HasKey("Id");
 
-                    b.ToTable("Quiz", (string)null);
+                    b.ToTable("Quizzes");
                 });
 
             modelBuilder.Entity("DataAccess.Models.QuizAnswer", b =>
                 {
+                    b.Property<string>("UserDataEmail")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<int>("QuizId")
                         .HasColumnType("int");
 
                     b.Property<int>("QuestionId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Email")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("QuestionAnswer")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UserDataEmail")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("QuizId", "QuestionId", "Email");
-
-                    b.HasIndex("UserDataEmail");
+                    b.HasKey("UserDataEmail", "QuizId", "QuestionId");
 
                     b.ToTable("QuizAnswers");
                 });
@@ -372,8 +349,7 @@ namespace DataAccess.Migrations
                         .WithMany("Choices")
                         .HasForeignKey("QuestionId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK__Choice__Question__31EC6D26");
+                        .IsRequired();
 
                     b.Navigation("Question");
                 });
@@ -384,8 +360,7 @@ namespace DataAccess.Migrations
                         .WithMany("Questions")
                         .HasForeignKey("QuizId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK__Question__QuizId__2D27B809");
+                        .IsRequired();
 
                     b.Navigation("Quiz");
                 });
@@ -394,7 +369,9 @@ namespace DataAccess.Migrations
                 {
                     b.HasOne("DataAccess.Models.UserData", null)
                         .WithMany("QuizAnswers")
-                        .HasForeignKey("UserDataEmail");
+                        .HasForeignKey("UserDataEmail")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

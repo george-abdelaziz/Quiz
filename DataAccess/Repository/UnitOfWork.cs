@@ -5,7 +5,7 @@ namespace DataAccess.Repository
 {
     public class UnitOfWork : IUnitOfWork
     {
-        private readonly QuizContext _db;
+        public QuizContext _db { set; get; }
         public UnitOfWork(QuizContext db)
         {
             _db = db;
