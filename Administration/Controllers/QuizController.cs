@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Administration.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public class QuizController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;

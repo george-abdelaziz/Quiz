@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Administration.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public class QuestionController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;

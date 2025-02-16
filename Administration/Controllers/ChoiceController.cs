@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Administration.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public class ChoiceController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
