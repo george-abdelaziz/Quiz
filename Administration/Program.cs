@@ -60,6 +60,8 @@ namespace Administration
             app.UseAuthentication();
             app.UseAuthorization();
 
+            DatabaseInitialization.SeedDatabaseAsync(app.Services);
+
             app.MapStaticAssets();
             app.MapRazorPages();
             app.MapControllerRoute(
