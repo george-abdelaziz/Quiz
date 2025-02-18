@@ -15,7 +15,8 @@ public partial class QuizContext : IdentityDbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=Quiz;Trusted_Connection=True;TrustServerCertificate=True;");
+        //optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=Quiz;Trusted_Connection=True;TrustServerCertificate=True;");
+        optionsBuilder.UseSqlServer("Server=db14191.public.databaseasp.net; Database=db14191; User Id=db14191; Password=Ri5+p8!W3Yn=; Encrypt=True; TrustServerCertificate=True; MultipleActiveResultSets=True;");
         base.OnConfiguring(optionsBuilder);
     }
 

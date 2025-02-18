@@ -5,7 +5,7 @@
 namespace DataAccess.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialMigration : Migration
+    public partial class Test : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -212,11 +212,11 @@ namespace DataAccess.Migrations
                     UserDataEmail = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     QuizId = table.Column<int>(type: "int", nullable: false),
                     QuestionId = table.Column<int>(type: "int", nullable: false),
-                    QuestionAnswer = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    QuestionAnswer = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_QuizAnswers", x => new { x.QuizId, x.QuestionId, x.UserDataEmail });
+                    table.PrimaryKey("PK_QuizAnswers", x => new { x.UserDataEmail, x.QuizId, x.QuestionId });
                     table.ForeignKey(
                         name: "FK_QuizAnswers_UserDatas_UserDataEmail",
                         column: x => x.UserDataEmail,
@@ -294,11 +294,6 @@ namespace DataAccess.Migrations
                 name: "IX_Questions_QuizId",
                 table: "Questions",
                 column: "QuizId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_QuizAnswers_UserDataEmail",
-                table: "QuizAnswers",
-                column: "UserDataEmail");
         }
 
         /// <inheritdoc />

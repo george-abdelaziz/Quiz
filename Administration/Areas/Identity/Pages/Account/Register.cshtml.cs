@@ -23,7 +23,7 @@ namespace Administration.Areas.Identity.Pages.Account
         private readonly IUserEmailStore<IdentityUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
-        
+
         private readonly RoleManager<IdentityRole> _roleManager;
 
         public RegisterModel(
@@ -32,7 +32,7 @@ namespace Administration.Areas.Identity.Pages.Account
             SignInManager<IdentityUser> signInManager,
             ILogger<RegisterModel> logger,
             IEmailSender emailSender,
-            
+
             RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
@@ -99,16 +99,16 @@ namespace Administration.Areas.Identity.Pages.Account
             public string ConfirmPassword { get; set; }
 
 
-            public string? Role {  get; set; }
+            public string? Role { get; set; }
             public IEnumerable<SelectListItem> RoleList { get; set; }
         }
 
 
         public async Task OnGetAsync(string returnUrl = null)
         {
-            Input = new InputModel 
+            Input = new InputModel
             {
-                RoleList = _roleManager.Roles.Select(r=>r.Name).Select(i=>
+                RoleList = _roleManager.Roles.Select(r => r.Name).Select(i =>
                         new SelectListItem
                         {
                             Text = i,
@@ -139,7 +139,8 @@ namespace Administration.Areas.Identity.Pages.Account
                     if (!string.IsNullOrEmpty(Input.Role))
                     {
                         await _userManager.AddToRoleAsync(user, Input.Role);
-                    } else
+                    }
+                    else
                     {
                         await _userManager.AddToRoleAsync(user, "User");
                     }

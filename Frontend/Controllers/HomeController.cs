@@ -18,7 +18,8 @@ namespace Frontend.Controllers
             _unitOfWork = unitOfWork;
             _clientFactory = clientFactory;
             _httpClient = httpClient;
-            _url = "https://localhost:7172/api/";
+            //_url = "https://localhost:7172/api/";
+            _url = "https://quiz-api.runasp.net/api/";
         }
         [HttpGet]
         public async Task<IActionResult> Index()
